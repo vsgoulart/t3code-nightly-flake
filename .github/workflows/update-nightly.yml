@@ -1,0 +1,112 @@
+name: Update nightly
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: update-nightly
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      changed: ${{ steps.update.outputs.changed }}
+      version: ${{ steps.update.outputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: DeterminateSystems/nix-installer-action@v20
+      - name: Update sources
+        id: update
+        run: |
+          bash scripts/update.sh
+          if git diff --quiet -- sources.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "version=$(jq -r .version sources.json)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sources
+          path: sources.json
+
+  # Runs for every new pin, and on manual dispatch to re-verify the current one.
+  build:
+    needs: update
+    if: needs.update.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            system: x86_64-linux
+          - os: ubuntu-24.04-arm
+            system: aarch64-linux
+          - os: macos-15
+            system: aarch64-darwin
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
+        with:
+          name: sources
+      - uses: DeterminateSystems/nix-installer-action@v20
+      - name: Verify runner system
+        run: test "$(nix eval --impure --raw --expr builtins.currentSystem)" = "${{ matrix.system }}"
+      - name: Build CLI
+        run: nix build --print-build-logs .#t3code --out-link cli
+      - name: Build desktop app
+        run: nix build --print-build-logs .#t3code-desktop --out-link desktop
+      - name: Smoke test CLI
+        env:
+          EXPECTED: ${{ needs.update.outputs.version }}
+        run: |
+          actual="$(./cli/bin/t3 --version)"
+          echo "$actual"
+          [[ "$actual" == *"$EXPECTED"* ]]
+          ./cli/bin/t3 --help >/dev/null
+          test -s cli/share/zsh/site-functions/_t3
+      - name: Verify macOS signatures
+        if: runner.os == 'macOS'
+        run: |
+          codesign --verify --strict cli/libexec/t3code/t3
+          codesign --verify --deep --strict "desktop/Applications/T3 Code (Nightly).app"
+          test -x cli/libexec/t3code/node_modules/node-pty/prebuilds/darwin-arm64/spawn-helper
+          test -x desktop/bin/t3code-desktop
+      - name: Verify Linux desktop entry
+        if: runner.os == 'Linux'
+        run: |
+          test -x desktop/bin/t3code-desktop
+          grep -qx 'Exec=t3code-desktop %U' desktop/share/applications/t3code-desktop.desktop
+          test -f desktop/share/icons/hicolor/512x512/apps/t3code.png
+
+  commit:
+    needs: [update, build]
+    if: needs.update.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
+        with:
+          name: sources
+      - name: Commit update
+        env:
+          VERSION: ${{ needs.update.outputs.version }}
+        run: |
+          git diff --quiet -- sources.json && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sources.json
+          git commit -m "chore: update T3 Code nightly to ${VERSION}"
+          git push
