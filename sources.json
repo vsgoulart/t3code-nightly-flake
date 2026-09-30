@@ -1,33 +1,33 @@
 {
-  "version": "0.0.44-nightly.20260929.2456",
-  "tag": "v0.0.44-nightly.20260929.2456",
-  "rev": "451afcb22d93f06cb24f9bc16703404564952553",
+  "version": "0.0.45-nightly.20260930.2468",
+  "tag": "v0.0.45-nightly.20260930.2468",
+  "rev": "0fcd5f90611451cca842689faea53b5450c022da",
   "cli": {
     "aarch64-darwin": {
-      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.0.44-nightly.20260929.2456/t3-0.0.44-nightly.20260929.2456-darwin-arm64.tar.gz",
-      "hash": "sha256-GBtC1yv53MiC6meeHn2yJIYJe3fRDI5hxOA5ZV7vTgc="
+      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.0.45-nightly.20260930.2468/t3-0.0.45-nightly.20260930.2468-darwin-arm64.tar.gz",
+      "hash": "sha256-E29UgPh0F3uLPo9LeuceKBBqg4I2PIVjKWlgvG76MJU="
     },
     "x86_64-linux": {
-      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.0.44-nightly.20260929.2456/t3-0.0.44-nightly.20260929.2456-linux-x64.tar.gz",
-      "hash": "sha256-Woh4eADHek9X5QqUyQH4gmmobPIC4iW//cA6vQW9mDI="
+      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.0.45-nightly.20260930.2468/t3-0.0.45-nightly.20260930.2468-linux-x64.tar.gz",
+      "hash": "sha256-0MIe16knXjDgLB/GQzIByXWMJ/qh0pPd0kTzlKGkIvM="
     },
     "aarch64-linux": {
-      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.0.44-nightly.20260929.2456/t3-0.0.44-nightly.20260929.2456-linux-arm64.tar.gz",
-      "hash": "sha256-Xaiw5xMmCYOg96d3vxfsDbUrgaUoCVOLgpkSyYfDj2U="
+      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.0.45-nightly.20260930.2468/t3-0.0.45-nightly.20260930.2468-linux-arm64.tar.gz",
+      "hash": "sha256-Q7Bl6N++KNMR4UNDZaCQXcMKaggJdZ+ulI0UuXgq0l4="
     }
   },
   "desktop": {
     "aarch64-darwin": {
-      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.0.44-nightly.20260929.2456/T3-Code-0.0.44-nightly.20260929.2456-arm64.zip",
-      "hash": "sha256-Nytf5NtAmRxdrUIgwkWKmIi7QNpwioYF0mPQXXrmtQo="
+      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.0.45-nightly.20260930.2468/T3-Code-0.0.45-nightly.20260930.2468-arm64.zip",
+      "hash": "sha256-z2J230jaWPj1Gf1DyxT1w1wSQgAVEMB681BjqjSSYJI="
     },
     "x86_64-linux": {
-      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.0.44-nightly.20260929.2456/T3-Code-0.0.44-nightly.20260929.2456-x86_64.AppImage",
-      "hash": "sha256-hfbi8B/9vHzPIB+JZf7dttjMSCdHBuD8dkR9qKIVYMw="
+      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.0.45-nightly.20260930.2468/T3-Code-0.0.45-nightly.20260930.2468-x86_64.AppImage",
+      "hash": "sha256-Fc8Dbz8f7vJ6Eua/zwJU9dvEr/ppPdfT1t53RD12yJI="
     },
     "aarch64-linux": {
-      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.0.44-nightly.20260929.2456/T3-Code-0.0.44-nightly.20260929.2456-arm64.AppImage",
-      "hash": "sha256-+v3fQcR1SAVNIClTSpx3oc42FoUMJdJsnE/jON5SnRE="
+      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.0.45-nightly.20260930.2468/T3-Code-0.0.45-nightly.20260930.2468-arm64.AppImage",
+      "hash": "sha256-BpSg+0Y9EcO0O6CrmV1Uf9GwByvz5lrWN/mEnWjtrL4="
     }
   }
 }
