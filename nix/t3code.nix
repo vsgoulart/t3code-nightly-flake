@@ -3,6 +3,7 @@
   stdenv,
   fetchurl,
   autoPatchelfHook,
+  patchelf,
   makeBinaryWrapper,
   installShellFiles,
   versionCheckHook,
@@ -22,6 +23,16 @@ let
     ":"
     (lib.makeBinPath extraRuntimePackages)
   ];
+
+  # patchelf 0.19 corrupts the `t3` Node.js single executable application
+  # (it segfaults on start), so keep patching it with 0.15.2.
+  patchelf_0_15 = patchelf.overrideAttrs {
+    version = "0.15.2";
+    src = fetchurl {
+      url = "https://github.com/NixOS/patchelf/releases/download/0.15.2/patchelf-0.15.2.tar.bz2";
+      hash = "sha256-F3RfVkFZyOIo/EEtplogSLhGxLa0Igt3y/IkFuAvLXw=";
+    };
+  };
 in
 stdenv.mkDerivation {
   pname = "t3code";
@@ -60,7 +71,9 @@ stdenv.mkDerivation {
   '';
 
   postInstall = ''
-    ${lib.optionalString stdenv.hostPlatform.isLinux ''autoPatchelf "$out/libexec"''}
+    ${lib.optionalString stdenv.hostPlatform.isLinux ''
+      PATH="${patchelf_0_15}/bin:$PATH" autoPatchelf "$out/libexec"
+    ''}
 
     monitor=("$out"/libexec/t3code/resource-monitor/*/t3-resource-monitor)
     if [[ ''${#monitor[@]} -ne 1 || ! -x "''${monitor[0]}" ]]; then
