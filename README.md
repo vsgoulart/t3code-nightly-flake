@@ -1,10 +1,10 @@
-# T3 Code Nightly Flake
+# T3 Code Flake
 
-A Nix flake providing the latest nightly build of
+A Nix flake providing the latest stable release of
 [T3 Code](https://github.com/pingdotgg/t3code).
 
-It repackages upstream's prebuilt nightly release assets; nothing is built
-from source. For the stable, source-built package, use `t3code` from nixpkgs.
+It repackages upstream's prebuilt release assets; nothing is built from
+source. Nightly and preview builds are not tracked.
 
 | Package          | Contents                                             | Upstream asset                      |
 | ---------------- | ---------------------------------------------------- | ----------------------------------- |
@@ -65,9 +65,9 @@ t3code-nightly.packages.${system}.t3code.override {
 
 The update workflow runs every six hours (and on manual dispatch). It:
 
-1. Selects the newest release tagged `v*-nightly.*`, ignoring preview and
-   stable releases, whose six required assets are fully uploaded. A nightly
-   that is still uploading is skipped until the next run.
+1. Selects the newest stable release tagged `vX.Y.Z`, ignoring nightly,
+   preview and other prereleases, whose six required assets are fully
+   uploaded. A release that is still uploading is skipped until the next run.
 2. Pins each asset's SHA-256 in `sources.json`, taken from GitHub's asset
    digest and cross-checked against upstream's `SHA256SUMS`.
 3. Builds both packages natively on x86_64 Linux, ARM64 Linux and Apple
@@ -82,4 +82,4 @@ bash scripts/update.sh
 nix build .#t3code .#t3code-desktop
 ```
 
-Set `T3CODE_NIGHTLY_TAG=v<version>` to pin a specific nightly.
+Set `T3CODE_TAG=v<version>` to pin a specific release.

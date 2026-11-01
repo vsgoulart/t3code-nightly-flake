@@ -18,7 +18,6 @@
 
 let
   pname = "t3code-desktop";
-  appName = "T3 Code (Nightly)";
 
   # Upstream's prebuilt desktop build: signed .app zip on macOS, AppImage on Linux.
   src = fetchurl { inherit (source) url hash; };
@@ -39,7 +38,7 @@ let
   passthru = { inherit tag; };
 
   meta = {
-    description = "T3 Code nightly desktop app, packaged from upstream prebuilt binaries";
+    description = "T3 Code desktop app, packaged from upstream prebuilt binaries";
     homepage = "https://t3.codes";
     downloadPage = "https://github.com/pingdotgg/t3code/releases";
     changelog = "https://github.com/pingdotgg/t3code/releases/tag/${tag}";
@@ -72,10 +71,18 @@ let
     installPhase = ''
       runHook preInstall
 
+      # The bundle name follows upstream's product name, e.g. "T3 Code (Beta).app".
+      apps=(*.app)
+      if [[ ''${#apps[@]} -ne 1 || ! -d "''${apps[0]}" ]]; then
+        echo "Expected exactly one .app bundle" >&2
+        exit 1
+      fi
+      app="''${apps[0]}"
+
       mkdir -p "$out/Applications" "$out/bin"
-      cp -R "${appName}.app" "$out/Applications/"
+      cp -R "$app" "$out/Applications/"
       makeBinaryWrapper \
-        "$out/Applications/${appName}.app/Contents/MacOS/${appName}" \
+        "$out/Applications/$app/Contents/MacOS/''${app%.app}" \
         "$out/bin/${pname}" \
         ${lib.escapeShellArgs wrapperArgs}
 

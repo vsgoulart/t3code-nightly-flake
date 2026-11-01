@@ -1,5 +1,5 @@
 {
-  description = "T3 Code nightly, packaged from upstream prebuilt binaries";
+  description = "T3 Code releases, packaged from upstream prebuilt binaries";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 

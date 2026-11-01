@@ -101,7 +101,7 @@ stdenv.mkDerivation {
   passthru = { inherit tag; };
 
   meta = {
-    description = "T3 Code nightly server and CLI, packaged from upstream prebuilt binaries";
+    description = "T3 Code server and CLI, packaged from upstream prebuilt binaries";
     homepage = "https://t3.codes";
     downloadPage = "https://github.com/pingdotgg/t3code/releases";
     changelog = "https://github.com/pingdotgg/t3code/releases/tag/${tag}";

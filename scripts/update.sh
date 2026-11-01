@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# Pin the newest complete T3 Code nightly release in sources.json.
+# Pin the newest complete T3 Code stable release in sources.json.
 #
 # Only prebuilt upstream release assets are referenced; nothing is built from
-# source. The file is left untouched when no newer complete nightly exists.
+# source. The file is left untouched when no newer complete release exists.
 #
 # Environment:
-#   T3CODE_NIGHTLY_TAG  optional, pin this exact tag (e.g. v0.0.43-nightly.20260928.2402)
+#   T3CODE_TAG  optional, pin this exact tag (e.g. v0.1.6)
 set -euo pipefail
 
 repo=pingdotgg/t3code
 sources=sources.json
-tag_override="${T3CODE_NIGHTLY_TAG:-}"
+tag_override="${T3CODE_TAG:-}"
 
 [[ -f flake.nix ]] || { echo "Run from the repository root." >&2; exit 1; }
 for tool in curl jq nix; do
@@ -26,11 +26,13 @@ current=""
 
 releases="$(github "https://api.github.com/repos/$repo/releases?per_page=100")"
 
-# Select the newest nightly (by date and build number, not API order) whose
-# six required assets are all fully uploaded. Preview and stable releases are
-# ignored. Emits {latest, candidate}; candidate is null when nothing newer.
+# Select the newest stable release (by semantic version, not API order) whose
+# six required assets are all fully uploaded. Nightly, preview and other
+# prereleases are ignored. Emits {latest, candidate}; candidate is null when
+# nothing newer.
 selection="$(jq -c --arg current "$current" --arg tag "$tag_override" '
-  def key: capture("-nightly\\.(?<d>[0-9]{8})\\.(?<n>[0-9]+)$") | [(.d | tonumber), (.n | tonumber)];
+  def stable: test("^v?[0-9]+\\.[0-9]+\\.[0-9]+$");
+  def key: ltrimstr("v") | split(".") | map(tonumber);
   def names($v): {
     cli: {
       "aarch64-darwin": "t3-\($v)-darwin-arm64.tar.gz",
@@ -58,14 +60,15 @@ selection="$(jq -c --arg current "$current" --arg tag "$tag_override" '
   def complete: [.files[][]] | all(. != null);
 
   ([.[]
-    | select((.draft | not) and (.tag_name | test("^v[0-9]+\\.[0-9]+\\.[0-9]+-nightly\\.[0-9]{8}\\.[0-9]+$")))
+    | select((.draft | not) and (.prerelease | not) and (.tag_name | stable))
     | select($tag == "" or .tag_name == $tag)]
-   | sort_by(.tag_name | key) | reverse) as $nightlies
-  | (if $current == "" then [0, 0] else ("v" + $current | key) end) as $pinned
+   | sort_by(.tag_name | key) | reverse) as $releases
+  # A pin that is not a stable version (e.g. an old nightly) is always replaced.
+  | (if ($current | stable) then ($current | key) else [-1] end) as $pinned
   | {
-      latest: ($nightlies[0].tag_name // null),
+      latest: ($releases[0].tag_name // null),
       candidate: (
-        [$nightlies[] | resolve | select(complete)]
+        [$releases[] | resolve | select(complete)]
         | map(select($tag != "" or (.tag | key) > $pinned))
         | first // null
       )
@@ -73,13 +76,13 @@ selection="$(jq -c --arg current "$current" --arg tag "$tag_override" '
 ' <<<"$releases")"
 
 latest="$(jq -r '.latest // empty' <<<"$selection")"
-[[ -n "$latest" ]] || { echo "No nightly release found${tag_override:+ for $tag_override}." >&2; exit 1; }
+[[ -n "$latest" ]] || { echo "No stable release found${tag_override:+ for $tag_override}." >&2; exit 1; }
 
 if [[ "$(jq -r '.candidate == null' <<<"$selection")" == true ]]; then
   if [[ "v$current" == "$latest" ]]; then
-    echo "Already pinned to the newest nightly ($current)."
+    echo "Already pinned to the newest release ($current)."
   else
-    echo "Newest nightly $latest is incomplete or not newer; keeping ${current:-nothing pinned}."
+    echo "Newest release $latest is incomplete or not newer; keeping ${current:-nothing pinned}."
   fi
   exit 0
 fi
