@@ -83,6 +83,7 @@ stdenv.mkDerivation {
 
     makeBinaryWrapper "$out/libexec/t3code/t3" "$out/bin/t3" \
       --set-default T3CODE_RESOURCE_MONITOR_PATH "''${monitor[0]}" \
+      --set-default T3CODE_TELEMETRY_ENABLED false \
       ${lib.escapeShellArgs wrapperArgs}
   ''
   + lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''

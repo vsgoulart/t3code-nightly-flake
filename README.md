@@ -49,12 +49,17 @@ t3code-nightly.packages.${system}.t3code.override {
   the desktop app's updater cannot work. The desktop launcher sets
   `T3CODE_DISABLE_AUTO_UPDATE=true`. Update through this flake instead, for
   example with `nix profile upgrade`.
-- **macOS app launched from Finder.** The variable above only applies when the
-  app is started with `t3code-desktop`; changing the signed bundle to embed it
+- **Telemetry is disabled.** Both `t3` and `t3code-desktop` default
+  `T3CODE_TELEMETRY_ENABLED=false`, which stops product usage events and relay
+  connection traces. Set `T3CODE_TELEMETRY_ENABLED=true` in your environment
+  to opt back in.
+- **macOS app launched from Finder.** The variables above only apply when the
+  app is started with `t3code-desktop`; changing the signed bundle to embed them
   would break its signature. To also cover Finder, Dock and Spotlight launches:
 
   ```console
   launchctl setenv T3CODE_DISABLE_AUTO_UPDATE true
+  launchctl setenv T3CODE_TELEMETRY_ENABLED false
   ```
 
 - **Background service.** `t3 service install` records the path of the running

@@ -27,6 +27,9 @@ let
     "--set"
     "T3CODE_DISABLE_AUTO_UPDATE"
     "true"
+    "--set-default"
+    "T3CODE_TELEMETRY_ENABLED"
+    "false"
   ]
   ++ lib.optionals (extraRuntimePackages != [ ]) [
     "--prefix"
