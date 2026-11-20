@@ -5,7 +5,8 @@
 # source. The file is left untouched when no newer complete release exists.
 #
 # Environment:
-#   T3CODE_TAG  optional, pin this exact tag (e.g. v0.1.6)
+#   T3CODE_TAG    optional, pin this exact tag (e.g. v0.1.6)
+#   GITHUB_TOKEN  optional, authenticates GitHub API calls
 set -euo pipefail
 
 repo=pingdotgg/t3code
@@ -18,7 +19,10 @@ for tool in curl jq nix; do
 done
 
 github() {
-  curl -fsSL --retry 3 -H "Accept: application/vnd.github+json" "$@"
+  # Anonymous API calls share a small per-IP rate limit that CI runners often exhaust.
+  local auth=()
+  [[ -n "${GITHUB_TOKEN:-}" ]] && auth=(-H "Authorization: Bearer $GITHUB_TOKEN")
+  curl -fsSL --retry 3 -H "Accept: application/vnd.github+json" "${auth[@]+"${auth[@]}"}" "$@"
 }
 
 current=""
