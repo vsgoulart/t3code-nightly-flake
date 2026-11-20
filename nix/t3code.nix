@@ -7,6 +7,7 @@
   makeBinaryWrapper,
   installShellFiles,
   versionCheckHook,
+  vulkan-loader,
   version,
   tag,
   source,
@@ -47,8 +48,12 @@ stdenv.mkDerivation {
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
 
-  # libstdc++, libgcc_s and libatomic for the prebuilt ELF binaries.
-  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [ (lib.getLib stdenv.cc.cc) ];
+  # libstdc++, libgcc_s and libatomic for the prebuilt ELF binaries;
+  # libvulkan for the Vulkan backend of the bundled @transcribe-cpp.
+  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [
+    (lib.getLib stdenv.cc.cc)
+    vulkan-loader
+  ];
 
   # Upstream ships both glibc and musl builds of libfff_c.so; only glibc is loaded.
   autoPatchelfIgnoreMissingDeps = [ "libc.musl-*.so.1" ];
