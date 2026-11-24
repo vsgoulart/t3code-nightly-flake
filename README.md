@@ -51,8 +51,12 @@ t3code-nightly.packages.${system}.t3code.override {
   example with `nix profile upgrade`.
 - **Telemetry is disabled.** Both `t3` and `t3code-desktop` default
   `T3CODE_TELEMETRY_ENABLED=false`, which stops product usage events and relay
-  connection traces. Set `T3CODE_TELEMETRY_ENABLED=true` in your environment
-  to opt back in.
+  connection traces, and `T3CODE_OTEL_SDK_DISABLED=true`, which stops any
+  OpenTelemetry export. Set either variable in your environment to opt back in.
+- **The analytics endpoint is blocked.** Both wrappers force
+  `T3CODE_POSTHOG_HOST=http://127.0.0.1:9`, so product usage events can never
+  reach `ingest.t3.codes`, even with telemetry switched back on. To allow them
+  again, override the package with `blockTelemetryEndpoint = false`.
 - **macOS app launched from Finder.** The variables above only apply when the
   app is started with `t3code-desktop`; changing the signed bundle to embed them
   would break its signature. To also cover Finder, Dock and Spotlight launches:
@@ -60,6 +64,8 @@ t3code-nightly.packages.${system}.t3code.override {
   ```console
   launchctl setenv T3CODE_DISABLE_AUTO_UPDATE true
   launchctl setenv T3CODE_TELEMETRY_ENABLED false
+  launchctl setenv T3CODE_OTEL_SDK_DISABLED true
+  launchctl setenv T3CODE_POSTHOG_HOST http://127.0.0.1:9
   ```
 
 - **Background service.** `t3 service install` records the path of the running

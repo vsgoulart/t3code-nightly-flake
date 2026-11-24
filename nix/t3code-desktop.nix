@@ -14,6 +14,9 @@
   # Extra tools placed on the desktop app's PATH (inherited by its bundled
   # server), e.g. [ git gh codex ]. Nothing is added by default.
   extraRuntimePackages ? [ ],
+  # Point product analytics at a dead local address instead of ingest.t3.codes,
+  # even if T3CODE_TELEMETRY_ENABLED is switched back on.
+  blockTelemetryEndpoint ? true,
 }:
 
 let
@@ -30,6 +33,14 @@ let
     "--set-default"
     "T3CODE_TELEMETRY_ENABLED"
     "false"
+    "--set-default"
+    "T3CODE_OTEL_SDK_DISABLED"
+    "true"
+  ]
+  ++ lib.optionals blockTelemetryEndpoint [
+    "--set"
+    "T3CODE_POSTHOG_HOST"
+    "http://127.0.0.1:9"
   ]
   ++ lib.optionals (extraRuntimePackages != [ ]) [
     "--prefix"

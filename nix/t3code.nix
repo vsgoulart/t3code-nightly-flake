@@ -15,10 +15,26 @@
   # Extra tools placed on the server's PATH, e.g. [ git gh codex ].
   # Nothing is added by default; the host PATH is used like upstream's installer.
   extraRuntimePackages ? [ ],
+  # Point product analytics at a dead local address instead of ingest.t3.codes,
+  # even if T3CODE_TELEMETRY_ENABLED is switched back on.
+  blockTelemetryEndpoint ? true,
 }:
 
 let
-  wrapperArgs = lib.optionals (extraRuntimePackages != [ ]) [
+  wrapperArgs = [
+    "--set-default"
+    "T3CODE_TELEMETRY_ENABLED"
+    "false"
+    "--set-default"
+    "T3CODE_OTEL_SDK_DISABLED"
+    "true"
+  ]
+  ++ lib.optionals blockTelemetryEndpoint [
+    "--set"
+    "T3CODE_POSTHOG_HOST"
+    "http://127.0.0.1:9"
+  ]
+  ++ lib.optionals (extraRuntimePackages != [ ]) [
     "--prefix"
     "PATH"
     ":"
@@ -88,7 +104,6 @@ stdenv.mkDerivation {
 
     makeBinaryWrapper "$out/libexec/t3code/t3" "$out/bin/t3" \
       --set-default T3CODE_RESOURCE_MONITOR_PATH "''${monitor[0]}" \
-      --set-default T3CODE_TELEMETRY_ENABLED false \
       ${lib.escapeShellArgs wrapperArgs}
   ''
   + lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
