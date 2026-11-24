@@ -37,16 +37,18 @@ releases="$(github "https://api.github.com/repos/$repo/releases?per_page=100")"
 selection="$(jq -c --arg current "$current" --arg tag "$tag_override" '
   def stable: test("^v?[0-9]+\\.[0-9]+\\.[0-9]+$");
   def key: ltrimstr("v") | split(".") | map(tonumber);
+  # Accepted asset names per platform, in order of preference. Since v0.1.10
+  # the AppImages are published without the version in their name.
   def names($v): {
     cli: {
-      "aarch64-darwin": "t3-\($v)-darwin-arm64.tar.gz",
-      "x86_64-linux": "t3-\($v)-linux-x64.tar.gz",
-      "aarch64-linux": "t3-\($v)-linux-arm64.tar.gz"
+      "aarch64-darwin": ["t3-\($v)-darwin-arm64.tar.gz"],
+      "x86_64-linux": ["t3-\($v)-linux-x64.tar.gz"],
+      "aarch64-linux": ["t3-\($v)-linux-arm64.tar.gz"]
     },
     desktop: {
-      "aarch64-darwin": "T3-Code-\($v)-arm64.zip",
-      "x86_64-linux": "T3-Code-\($v)-x86_64.AppImage",
-      "aarch64-linux": "T3-Code-\($v)-arm64.AppImage"
+      "aarch64-darwin": ["T3-Code-\($v)-arm64.zip"],
+      "x86_64-linux": ["T3-Code-\($v)-x86_64.AppImage", "T3-Code-x86_64.AppImage"],
+      "aarch64-linux": ["T3-Code-\($v)-arm64.AppImage", "T3-Code-arm64.AppImage"]
     }
   };
   def resolve:
@@ -58,7 +60,8 @@ selection="$(jq -c --arg current "$current" --arg tag "$tag_override" '
         rev: .target_commitish,
         sums: ($a["SHA256SUMS"].browser_download_url // null),
         files: (names($v) | map_values(map_values(
-          $a[.] | if . == null then null else {url: .browser_download_url, digest: (.digest // null)} end
+          (map($a[.] // empty) | first // null)
+          | if . == null then null else {url: .browser_download_url, digest: (.digest // null)} end
         )))
       };
   def complete: [.files[][]] | all(. != null);
