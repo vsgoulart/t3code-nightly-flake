@@ -1,33 +1,33 @@
 {
-  "version": "0.1.12",
-  "tag": "v0.1.12",
-  "rev": "ca81b7b97a1c4b91e5ac25768d0f6629f37732fd",
+  "version": "0.1.13",
+  "tag": "v0.1.13",
+  "rev": "bc0f04da94f64b5e487c598761a43b4cf06b2ac9",
   "cli": {
     "aarch64-darwin": {
-      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.12/t3-0.1.12-darwin-arm64.tar.gz",
-      "hash": "sha256-G3jJdUFgYjZhxZQqfiL1pipkvx+Wqzl/ULvHxrYRXKQ="
+      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.13/t3-0.1.13-darwin-arm64.tar.gz",
+      "hash": "sha256-2DsuHvlVfhLzQKcplkYgPNzdXuCvMnLmkiwmQQz+85Y="
     },
     "x86_64-linux": {
-      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.12/t3-0.1.12-linux-x64.tar.gz",
-      "hash": "sha256-m6PbRuNVT7mXD9Xt6egjwvbW9nY/QDQL1MjvawlQHFQ="
+      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.13/t3-0.1.13-linux-x64.tar.gz",
+      "hash": "sha256-ZOD4RG0/YYsVfU5aCmgIqzyL8aGz5E6rMQDlVL4F5dc="
     },
     "aarch64-linux": {
-      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.12/t3-0.1.12-linux-arm64.tar.gz",
-      "hash": "sha256-Kc+6sZEXqkNvFwA4Kvuc/l1+9HYJyrupNWJxoLylrZg="
+      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.13/t3-0.1.13-linux-arm64.tar.gz",
+      "hash": "sha256-xVPBfbBwMNAygImJQn21AivwQCfrzsIhjGn7Gl+hN38="
     }
   },
   "desktop": {
     "aarch64-darwin": {
-      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.12/T3-Code-0.1.12-arm64.zip",
-      "hash": "sha256-bMxS4Q2dQGeTjbfNU11Q2Bk4ZP6/oc+myEhbw6p9v7c="
+      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.13/T3-Code-0.1.13-arm64.zip",
+      "hash": "sha256-f0b9KwfJDm/ttiP0clvEAwym6GzoL2mkha1JKMqJNQ0="
     },
     "x86_64-linux": {
-      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.12/T3-Code-x86_64.AppImage",
-      "hash": "sha256-ZrkVUVcd9tKbVctZApXt9BHP+WyVqP6z9Bw8pZXXIuI="
+      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.13/T3-Code-x86_64.AppImage",
+      "hash": "sha256-2sG76ek8Gl+wlCMyvvqZhZf2oIYjKod2bvXYI1pE9W0="
     },
     "aarch64-linux": {
-      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.12/T3-Code-arm64.AppImage",
-      "hash": "sha256-agBNXaVi7CXRR930rld+1m49BStolU5FWheCl6g72Po="
+      "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.13/T3-Code-arm64.AppImage",
+      "hash": "sha256-RxVureTT6MY1VU+FmlkOFWFNY7bZeS3XaEveyuNl7EE="
     }
   }
 }
